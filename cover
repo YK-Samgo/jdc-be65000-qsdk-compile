@@ -26,7 +26,19 @@ git_branch=$(git -C "$src_dir" branch --show-current)
 if [  "$git_branch" != "$manifest_xml" ]; then
     echo "WARNING: The current git branch '$git_branch' does not match the manifest XML '$manifest_xml'."
     echo "This may lead to inaccurate coverage results. Please ensure you are on the correct branch before running this script."
-    echo "Proceed anyway"
+    if [ -f "$build_dir/.cover_anyway" ]; then
+        echo "Note: You have previously chosen to proceed anyway. Skipping this check."
+    else
+        echo "Proceed anyway? (y/n)"
+        read -r answer
+        if [[ "$answer" == "y" ]]; then
+            echo "Roger. You need only answer this question once. A file '.cover_anyway' will be created in the build directory to skip this check in the future."
+            touch "$build_dir/.cover_anyway"
+        else
+            echo "Aborting."
+            exit 1
+        fi
+    fi
 fi
 
 for f in $(find $src_dir/qsdk -type f); do
