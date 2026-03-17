@@ -1,0 +1,44 @@
+#!/bin/bash
+
+src_dir=$(dirname $(realpath $0))
+if [ -n "$1" ]; then
+    build_dir=$(realpath $1)
+else
+    build_dir=$(dirname .)
+fi
+
+if [ ! -d "$build_dir/.repo" ] || [ ! -d "$build_dir/qsdk" ]; then
+    echo "Error: $build_dir is not a valid QSDK build directory."
+    echo "Please ensure you are running this script in the 'repo sync' directory."
+    echo "Please use this script in either of 2 ways:"
+    echo "1. $0 <path_to_repo_sync_directory>"
+    echo "2. cd <path_to_repo_sync_directory> && $0"
+    exit 1
+fi
+
+manifest_xml=$(basename $(readlink "$build_dir/.repo/manifest.xml"))
+git_branch=$(git -C "$src_dir" branch --show-current)
+
+if [  "$git_branch" != "$manifest_xml" ]; then
+    echo "WARNING: The current git branch '$git_branch' does not match the manifest XML '$manifest_xml'."
+    echo "This may lead to inaccurate coverage results. Please ensure you are on the correct branch before running this script."
+    echo "Proceed anyway"
+fi
+
+for f in $(find $src_dir/qsdk -type f); do
+    #echo "Processing $f"
+    # Remove the build directory prefix from the file path
+    relative_path=${f#$src_dir/}
+    target_file="$build_dir/$relative_path"
+    if [ -f "$target_file" ];then
+        if diff "$f" "$target_file" > /dev/null; then
+            echo "SKIP the same $relative_path"
+        else
+            echo "COVER $relative_path"
+            cp "$f" "$target_file"
+        fi
+    else
+        echo "COPY absent $relative_path"
+        cp "$f" "$target_file"
+    fi
+done
