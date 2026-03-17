@@ -94,3 +94,9 @@ make -j1 V=s
 ```
 
 最终包在`$HOME/compile/qsdk/targets/ipq53xx/generic/目录下`
+
+## 刷入
+
+这个仓库的修改全部适配不死uboot，进入uboot刷入factory包即可
+
+开发过程极易出现问题，建议最好能有串口调试能力
