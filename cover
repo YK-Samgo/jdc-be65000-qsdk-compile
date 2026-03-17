@@ -4,16 +4,20 @@ src_dir=$(dirname $(realpath $0))
 if [ -n "$1" ]; then
     build_dir=$(realpath $1)
 else
-    build_dir=$(dirname .)
+    build_dir=$(realpath .)
 fi
 
 if [ ! -d "$build_dir/.repo" ] || [ ! -d "$build_dir/qsdk" ]; then
-    echo "Error: $build_dir is not a valid QSDK build directory."
-    echo "Please ensure you are running this script in the 'repo sync' directory."
-    echo "Please use this script in either of 2 ways:"
-    echo "1. $0 <path_to_repo_sync_directory>"
-    echo "2. cd <path_to_repo_sync_directory> && $0"
-    exit 1
+    # May run in qsdk dir, try parent dir
+    build_dir=$(dirname "$build_dir")
+    if [ ! -d "$build_dir/.repo" ] || [ ! -d "$build_dir/qsdk" ]; then
+        echo "Error: $build_dir is not a valid QSDK build directory."
+        echo "Please ensure you are running this script in the 'repo sync' directory."
+        echo "Please use this script in either of 2 ways:"
+        echo "1. $0 <path_to_repo_sync_directory>"
+        echo "2. cd <path_to_repo_sync_directory> && $0"
+        exit 1
+    fi
 fi
 
 manifest_xml=$(basename $(readlink "$build_dir/.repo/manifest.xml"))
