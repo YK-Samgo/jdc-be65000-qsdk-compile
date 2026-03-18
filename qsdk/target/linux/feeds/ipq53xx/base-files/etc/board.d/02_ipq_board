@@ -11,7 +11,7 @@
 . /usr/share/libubox/jshn.sh
 . /lib/functions/uci-defaults.sh
 
-CFG="/etc/board.json"
+CFG="${CFG:-/etc/board.json}"
 
 get_fw_name() {
 	wifi_ipq="ignored"

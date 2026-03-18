@@ -16,12 +16,14 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+CFG="${CFG:-/etc/board.json}"
 
-[ -e /etc/config/network ] && exit 0
-
-touch /etc/config/network
-
-CFG=/etc/board.json
+# board_detect may run during preinit with CFG=/tmp/board.json.
+# Avoid touching persistent /etc in that phase when rootfs is read-only.
+if [ "$CFG" = "/etc/board.json" ]; then
+	[ -e /etc/config/network ] && exit 0
+	touch /etc/config/network
+fi
 
 . /lib/functions/uci-defaults.sh
 
