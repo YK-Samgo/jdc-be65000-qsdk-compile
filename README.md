@@ -63,7 +63,7 @@ cd compile
 # repo 拉取，最后的xml来源于QSDK Wiki的表格https://wiki.codelinaro.org/en/clo/qsdk/overview#clo-download-steps
 # 注意这两个repo命令会下载大量数据，部分数据难以下载，请各显神通
 # repo拉取luci.git时优先从openwrt官网下载，很慢，失败了会再从codelinaro拉取，所以这边失败一次没问题
-repo init -u https://codelinaro.org/clo/qsdk/releases/manifest/qstak -b release -m AU_LINUX_QSDK_NHSS.QSDK.12.5.R6_TARGET_ALL.12.5.6.2987.012.xml
+repo init -u https://git.codelinaro.org/clo/qsdk/releases/manifest/qstak -b release -m AU_LINUX_QSDK_NHSS.QSDK.12.5.R6_TARGET_ALL.12.5.6.2987.012.xml --repo-url=https://git.codelinaro.org/clo/tools/repo
 repo sync
 # 进入qsdk目录
 cd qsdk
